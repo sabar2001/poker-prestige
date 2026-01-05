@@ -59,7 +59,7 @@ export class PotManager {
 
     // Process each contribution level
     for (let i = 0; i < contributions.length; i++) {
-      const [currentPlayerId, currentAmount] = contributions[i];
+      const [_currentPlayerId, currentAmount] = contributions[i];
       
       if (currentAmount <= previousLevel) {
         continue;

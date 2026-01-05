@@ -8,7 +8,11 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "lint": "eslint src --ext .ts",
-    "test": "jest --coverage"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "db:migrate": "ts-node src/database/migrate.ts",
+    "db:test": "ts-node -e \"import('./src/database/index').then(db => db.testConnection().then(() => db.closePool()))\""
   },
   "keywords": ["poker", "multiplayer", "authoritative-server", "socket.io"],
   "author": "",

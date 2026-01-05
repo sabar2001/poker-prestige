@@ -135,7 +135,7 @@ export class StateSerializer {
   static createStatePatch(
     oldState: GodState,
     newState: GodState,
-    targetSteamId: string
+    _targetSteamId: string
   ): Partial<PlayerView> {
     const patch: any = {
       sequenceId: newState.sequenceId

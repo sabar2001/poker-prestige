@@ -1,8 +1,7 @@
 import { Socket } from 'socket.io';
-import { TableInstance, GameState } from './TableInstance';
+import { TableInstance } from './TableInstance';
 import { PlayerView } from './StateSerializer';
 import { ActionType, ServerEvent } from '../protocol/Events';
-import { config } from '../config';
 
 /**
  * Table configuration
@@ -55,13 +54,15 @@ export class TableManager {
   /**
    * Create a new table
    */
-  createTable(config: TableConfig = {}): TableInstance {
+  createTable(tableConfig: TableConfig = {}): TableInstance {
     const {
       tableId,
       maxPlayers = 6,
-      smallBlind = config.defaultSmallBlind || 10,
-      bigBlind = config.defaultBigBlind || 20
-    } = config;
+      smallBlind = 10,
+      bigBlind = 20
+    } = tableConfig;
+    
+    console.log(`[TableManager] Creating table with ${maxPlayers} max players`);
 
     const table = new TableInstance(tableId, smallBlind, bigBlind);
     this.tables.set(table.tableId, table);
@@ -78,13 +79,13 @@ export class TableManager {
    */
   private setupTableCallbacks(table: TableInstance): void {
     // State change callback - emit to specific players
-    table.setOnStateChange((state: PlayerView, playerSteamIds: string[]) => {
+    table.setOnStateChange((_state: PlayerView, playerSteamIds: string[]) => {
       if (!this.io) return;
 
       playerSteamIds.forEach(steamId => {
         // Find socket for this player
         const sockets = Array.from(this.io.sockets.sockets.values());
-        const playerSocket = sockets.find((s: Socket) => (s as any).steamId === steamId);
+        const playerSocket = (sockets as Socket[]).find((s: Socket) => (s as any).steamId === steamId);
         
         if (playerSocket && playerSocket.connected) {
           // Send personalized state to each player
@@ -111,7 +112,7 @@ export class TableManager {
       if (!this.io) return;
 
       const sockets = Array.from(this.io.sockets.sockets.values());
-      const playerSocket = sockets.find((s: Socket) => (s as any).steamId === steamId);
+      const playerSocket = (sockets as Socket[]).find((s: Socket) => (s as any).steamId === steamId);
       
       if (playerSocket && playerSocket.connected) {
         playerSocket.emit(ServerEvent.ERROR, {
@@ -209,7 +210,7 @@ export class TableManager {
   cleanupEmptyTables(): void {
     const emptyTables: string[] = [];
 
-    this.tables.forEach((table, tableId) => {
+    this.tables.forEach(() => {
       // Check if table has been empty for a while
       // For now, just log - implement actual cleanup logic later
       // emptyTables.push(tableId);

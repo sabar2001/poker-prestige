@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Deck } from '../engine/Deck';
 import { HandEvaluator, HandResult } from '../engine/HandEvaluator';
-import { PotManager, Pot } from '../engine/PotManager';
+import { PotManager } from '../engine/PotManager';
 import { StateSerializer, GodState, PlayerView } from './StateSerializer';
 import { ActionType } from '../protocol/Events';
 import { Card } from '../types/game.types';
@@ -59,7 +59,8 @@ export class TableInstance {
   // Engine components (Pure Logic)
   private deck: Deck;
   private potManager: PotManager;
-  private handEvaluator: HandEvaluator;
+  // HandEvaluator is used statically, no instance needed
+  // private handEvaluator: HandEvaluator;
 
   // Game state
   private gameState: GameState;
@@ -99,7 +100,7 @@ export class TableInstance {
     // Initialize engine components
     this.deck = new Deck();
     this.potManager = new PotManager();
-    this.handEvaluator = new HandEvaluator();
+    // HandEvaluator is used statically (HandEvaluator.evaluateHand)
 
     // Start in lobby state
     this.gameState = GameState.LOBBY_INITIALIZING;
